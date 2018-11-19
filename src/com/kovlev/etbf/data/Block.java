@@ -91,6 +91,7 @@ public class Block {
         }
         data.position(index);
         data.put(stringBytes);
+        data.put(stringBytes.length, (byte)0); // Null terminated
         modified = true;
     }
 
@@ -99,7 +100,7 @@ public class Block {
     }
 
     public int get(int index) {
-        return data.get(index);
+        return data.get(index) & 0xFF;
     }
 
     public void put(int index, byte b) {

@@ -41,8 +41,16 @@ public class File extends Entry {
         return filename;
     }
 
+    public void setFilename(String newFilename) {
+        filename = newFilename;
+    }
+
     public long getID() {
         return id;
+    }
+
+    public long getFileSize() {
+        return fileSize;
     }
 
     public InputStream getIS() {
@@ -85,6 +93,11 @@ public class File extends Entry {
             rPos = 0;
             super.close();
         }
+
+        @Override
+        public int available() throws IOException {
+            return rPos == fileSize ? 0 : 1;
+        }
     }
 
     private class BlockOutputStream extends OutputStream {
@@ -112,8 +125,8 @@ public class File extends Entry {
                     }
                 }
                 wPos++;
-            } catch (Exception ignored) {
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -122,9 +135,13 @@ public class File extends Entry {
             bulk = true;
             super.write(bytes, start, end);
             bulk = false;
+            fileSize = wPos;
             try {
                 edm.getFileManager().modifyFileSize(File.this, fileSize);
-            } catch (Exception ignored) {}
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

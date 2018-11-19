@@ -124,6 +124,10 @@ public class EncryptedDataManager {
         time = System.currentTimeMillis() - time;
         double speed = (double)cnt * Block.ENCRYPTED_SIZE / ((double)time / 1000 * 1024);
         System.out.println(speed + " kb/s");
+    }
+
+    public void close() throws Exception {
+        flush();
         fileCursor.close();
     }
 }

@@ -53,8 +53,23 @@ public class FileManager extends Manager<File> {
         edm.readBlock(blockToWrite).putLong(indexInBlock * entrySize() + FILENAME_SIZE + POINTER_SIZE, newFileSize);
     }
 
-    public void modifyFileName(File f, String newName) {
-        // TODO
+    public void modifyFileName(File f, String newName) throws Exception {
+        filesByFilename.remove(f.getFilename());
+        long index = blockIndexMap.get(f);
+        blockIndexMap.remove(f);
+
+        f.setFilename(newName);
+        filesByFilename.put(newName, f);
+
+        blockIndexMap.put(f, index);
+
+        long blockIndex = index / ENTRIES_PER_BLOCK;
+        int indexInBlock = (int) (index % ENTRIES_PER_BLOCK);
+        long blockToWrite = blocks.get((int) blockIndex);
+
+        System.out.println("Filename modified: " + newName);
+
+        edm.readBlock(blockToWrite).putString(newName, indexInBlock * entrySize(), FILENAME_SIZE);
     }
 
     public File getFile(String filename) {
@@ -93,7 +108,7 @@ public class FileManager extends Manager<File> {
         long id = b.getLong(start + FILENAME_SIZE + POINTER_SIZE + FILESIZE_SIZE);
 
         if (id > maxID) maxID = id;
-        System.out.println("FILENAME: " + fileName + " " + maxID);
+        System.out.println("FILENAME: " + fileName + " " + id);
 
         return new File(fileName, blockStart, fileSize, id, edm);
     }

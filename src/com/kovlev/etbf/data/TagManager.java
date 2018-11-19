@@ -76,6 +76,7 @@ public class TagManager extends Manager<Tag> {
         System.out.println("TAG: " + entry + " " + entry.getID());
         tagsByName.put(entry.getTagString(), entry);
         tagsByID.put(entry.getID(), entry);
+        if (entry.getID() > maxID) maxID = entry.getID();
     }
 
     @Override
