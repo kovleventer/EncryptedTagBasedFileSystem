@@ -4,6 +4,10 @@ import com.kovlev.etbf.filesystem.Entry;
 
 import java.util.*;
 
+/**
+ * Abstract class to manage database "tables"
+ * @param <E> Stored record
+ */
 public abstract class Manager<E extends Entry> {
     protected Map<E, Long> blockIndexMap;
     protected List<Long> blocks;
@@ -12,18 +16,48 @@ public abstract class Manager<E extends Entry> {
     protected long count;
     protected final int ENTRIES_PER_BLOCK = Block.DEFAULT_SIZE / entrySize();
 
+    /**
+     * Index of the first block
+     * @return 1, 2, or 3 depending on implementation
+     */
     protected abstract long firstBlock();
 
+    /**
+     * @return The size of a record
+     */
     protected abstract int entrySize();
 
+    /**
+     * Reads an entry from a block
+     * @param b The block to read from
+     * @param start Offset in bytes
+     * @return The Entry initialized with values from the block
+     */
     protected abstract E readInfoIntoEntry(Block b, int start);
 
+    /**
+     * Registers an entry into various collections
+     * @param entry The entry to register
+     */
     protected abstract void addEntryToEntryCollection(E entry);
 
+    /**
+     * Extended constructor, since reading in is done by Manager's constructor
+     * And the specific collections would not exist in inherited classes yet
+     */
     protected abstract void createEntries();
 
+    /**
+     * @return How many entries do we have
+     */
     protected abstract int getEntriesSize();
 
+    /**
+     * Constructor, which reads in a specific table of our database
+     * @param count How many entries do we have stored
+     * @param edm Main manager for accessing blocks
+     * @throws Exception
+     */
     public Manager(long count, EncryptedDataManager edm) throws Exception {
         this.edm = edm;
         this.count = count;
@@ -54,6 +88,14 @@ public abstract class Manager<E extends Entry> {
 
     }
 
+    /**
+     * Adds an entry to
+     *  a) The specific collections
+     *  b) The end of the table
+     * @param entry The entry to add
+     * @return The Block to which the entry was added to
+     * @throws Exception
+     */
     protected long add(E entry) throws Exception {
         addEntryToEntryCollection(entry);
         blockIndexMap.put(entry, (long) blockIndexMap.size());
@@ -67,10 +109,18 @@ public abstract class Manager<E extends Entry> {
         return currentBlockIndex;
     }
 
+    /**
+     * @return The position of the first available byte in the last used block
+     */
     protected int getFirstAvailableIndex() {
         return ((getEntriesSize() - 1) % ENTRIES_PER_BLOCK) * entrySize();
     }
 
+    /**
+     * Checks whether a new block should be added
+     * @param size How many entries do we have right now
+     * @return True if a new block must be allocated
+     */
     protected boolean isExpansionNeeded(int size) {
         if (ENTRIES_PER_BLOCK == 1) {
             return size != 1;

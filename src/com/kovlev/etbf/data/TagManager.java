@@ -1,14 +1,14 @@
 package com.kovlev.etbf.data;
 
-import com.kovlev.etbf.filesystem.File;
 import com.kovlev.etbf.filesystem.Tag;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
+/**
+ * Manages the database table for tags
+ */
 public class TagManager extends Manager<Tag> {
 
     private static final int TAG_SIZE = 64;
@@ -23,6 +23,12 @@ public class TagManager extends Manager<Tag> {
         super(count, edm);
     }
 
+    /**
+     * Adds a new tag
+     * @param tagname The name of the tag
+     * @return True if the tag did not exist before
+     * @throws Exception
+     */
     public boolean addTag(String tagname) throws Exception {
         if (tagsByName.containsKey(tagname)) {
             return false;
@@ -39,6 +45,8 @@ public class TagManager extends Manager<Tag> {
 
         return true;
     }
+
+    // Getters
 
     public Tag getTag(String name) {
         if (!tagsByName.containsKey(name)) return null;

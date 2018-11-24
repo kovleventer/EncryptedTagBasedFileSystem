@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+/**
+ * Manages the encrypted database
+ */
 public class EncryptedDataManager {
 
     private SortedMap<Long, Block> blockCache;
@@ -30,6 +33,12 @@ public class EncryptedDataManager {
     private final Path path;
     private final String password;
 
+    /**
+     * Opens or creates a new container
+     * @param filepath The path of the container
+     * @param password The password as String
+     * @throws Exception
+     */
     public EncryptedDataManager(String filepath, String password) throws Exception {
         blockCache = new TreeMap<>();
         path = Paths.get(filepath);
@@ -42,6 +51,10 @@ public class EncryptedDataManager {
         }
     }
 
+    /**
+     * Creates a new container and opens it
+     * @throws Exception
+     */
     private void createEncryptedContainer() throws Exception {
         Block masterBlock = MasterBlockManager.createEmptyMasterBlock();
         blockCache.put(0L, masterBlock);
@@ -52,6 +65,10 @@ public class EncryptedDataManager {
         openEncryptedContainer();
     }
 
+    /**
+     * Opens an existing container
+     * @throws Exception
+     */
     private void openEncryptedContainer() throws Exception {
         fileCursor = new RandomAccessFile(path.toFile(), "rwd");
         masterBlockManager = new MasterBlockManager(readBlock(0));
@@ -60,6 +77,10 @@ public class EncryptedDataManager {
         relationManager = new RelationManager(masterBlockManager.getRelationCount(), this);
     }
 
+    /**
+     * Adds a new block to the container
+     * @return The new block's id
+     */
     public long addNewBlock() {
         long newBlockIndex = masterBlockManager.getBlockCount();
         masterBlockManager.setBlockCount(newBlockIndex + 1);
@@ -68,6 +89,11 @@ public class EncryptedDataManager {
         return newBlockIndex;
     }
 
+    /**
+     * Encrypts a block and writes it back to the harddrive
+     * @param blockId The ID of the block
+     * @throws Exception
+     */
     public void writeBlock(long blockId) throws Exception {
         if (!blockCache.containsKey(blockId)) {
             throw new ETBFSException("Block not yet loaded");
@@ -83,6 +109,12 @@ public class EncryptedDataManager {
         }
     }
 
+    /**
+     * Reads a block from the harddrive or from the cache, if it is already loaded
+     * @param blockId The ID of the block
+     * @return The readed block
+     * @throws Exception
+     */
     public Block readBlock(long blockId) throws Exception {
         if (!blockCache.containsKey(blockId)) {
             fileCursor.seek(blockId * Block.ENCRYPTED_SIZE);
@@ -93,6 +125,8 @@ public class EncryptedDataManager {
         }
         return blockCache.get(blockId);
     }
+
+    // Getters for managers
 
     public FileManager getFileManager() {
         return fileManager;
@@ -110,6 +144,10 @@ public class EncryptedDataManager {
         return relationManager;
     }
 
+    /**
+     * Writes all modified cached blocks to the harddrive
+     * @throws Exception
+     */
     public void flush() throws Exception {
         int cnt = 0;
         long time = System.currentTimeMillis();
@@ -126,6 +164,10 @@ public class EncryptedDataManager {
         System.out.println(speed + " kb/s");
     }
 
+    /**
+     * Closes the container by flushing it and closing the whole file
+     * @throws Exception
+     */
     public void close() throws Exception {
         flush();
         fileCursor.close();

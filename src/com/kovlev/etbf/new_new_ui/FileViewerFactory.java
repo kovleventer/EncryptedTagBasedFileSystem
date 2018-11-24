@@ -6,6 +6,12 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class FileViewerFactory {
+    /**
+     * Associates file viewers wth file extensions
+     * @param file The file to view
+     * @return The specific fileViewer
+     * @throws IOException
+     */
     public static AbstractFileViewer getFileViewer(File file) throws IOException {
         String[] splitted = file.getFilename().split(Pattern.quote("."));
         String extension = splitted[splitted.length - 1];

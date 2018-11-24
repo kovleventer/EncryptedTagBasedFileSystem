@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Represents a file
+ */
 public class File extends Entry {
     protected String filename;
     protected long fileSize;
@@ -23,6 +26,14 @@ public class File extends Entry {
     private OutputStream os;
     private long wPos, rPos;
 
+    /**
+     * Constructs a file
+     * @param filename Ne name of the file
+     * @param firstBlockID The id of the first block, on which the file data starts (this hold true even for files with a size of 0)
+     * @param fileSize The size of the file
+     * @param id The id of the file (in order to speed up navigation)
+     * @param edm
+     */
     public File(String filename, long firstBlockID, long fileSize, long id, EncryptedDataManager edm) {
         this.filename = filename;
         this.fileSize = fileSize;
@@ -36,6 +47,8 @@ public class File extends Entry {
         wPos = 0;
         rPos = 0;
     }
+
+    // Getters, setters
 
     public String getFilename() {
         return filename;
@@ -61,6 +74,9 @@ public class File extends Entry {
         return os;
     }
 
+    /**
+     * Input stream, from which the user can read bytes from the blocks seamlessly
+     */
     private class BlockInputStream extends InputStream {
 
         @Override
@@ -100,6 +116,10 @@ public class File extends Entry {
         }
     }
 
+    /**
+     * Custom outputstream, which hides new block allocations
+     * Also supports bulk write
+     */
     private class BlockOutputStream extends OutputStream {
 
         private boolean bulk = false;
@@ -151,10 +171,18 @@ public class File extends Entry {
         }
     }
 
+    /**
+     * @param position File cursor position
+     * @return The currently active block's index in the block list (this must be translated to block id)
+     */
     private int getBlockIndexByPosition(long position) {
         return (int) (position / Block.DEFAULT_SIZE);
     }
 
+    /**
+     * @param position File cursor position
+     * @return The currently active byte's position in the active block
+     */
     private int getIndexInBlock(long position) {
         return (int) (position % Block.DEFAULT_SIZE);
     }

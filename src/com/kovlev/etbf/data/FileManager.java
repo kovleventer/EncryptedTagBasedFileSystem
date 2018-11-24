@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Manages file list
+ */
 public class FileManager extends Manager<File> {
 
     private static final int FILENAME_SIZE = 256;
@@ -18,10 +21,22 @@ public class FileManager extends Manager<File> {
     private HashMap<String, File> filesByFilename;
     private HashMap<Long, File> filesByID;
 
+    /**
+     * Constructor
+     * @param fileCount How many files do we have
+     * @param edm Main manager for accessing blocks
+     * @throws Exception
+     */
     public FileManager(long fileCount, EncryptedDataManager edm) throws Exception {
         super(fileCount, edm);
     }
 
+    /**
+     * Creates a new file in the container
+     * @param filename The name of the new file
+     * @return True if the file did not exist before
+     * @throws Exception
+     */
     public boolean addFile(String filename) throws Exception {
         if (filesByFilename.containsKey(filename)) {
             return false;
@@ -42,6 +57,12 @@ public class FileManager extends Manager<File> {
         return true;
     }
 
+    /**
+     * Modifies the file size of a given file and writes this information back to the database
+     * @param file The file to modify
+     * @param newFileSize New file size
+     * @throws Exception
+     */
     public void modifyFileSize(File file, long newFileSize) throws Exception {
         long index = blockIndexMap.get(file);
         long blockIndex = index / ENTRIES_PER_BLOCK;
@@ -53,6 +74,12 @@ public class FileManager extends Manager<File> {
         edm.readBlock(blockToWrite).putLong(indexInBlock * entrySize() + FILENAME_SIZE + POINTER_SIZE, newFileSize);
     }
 
+    /**
+     * Modifies the name of a given file
+     * @param f The file to modify
+     * @param newName The new filename
+     * @throws Exception
+     */
     public void modifyFileName(File f, String newName) throws Exception {
         filesByFilename.remove(f.getFilename());
         long index = blockIndexMap.get(f);
@@ -71,6 +98,8 @@ public class FileManager extends Manager<File> {
 
         edm.readBlock(blockToWrite).putString(newName, indexInBlock * entrySize(), FILENAME_SIZE);
     }
+
+    // Getters
 
     public File getFile(String filename) {
         if (filesByFilename.containsKey(filename)) {

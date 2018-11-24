@@ -22,16 +22,28 @@ public class FileListModel extends AbstractListModel {
 
     private ArrayList<File> currentSelection;
 
+    /**
+     * Getter for acessing a file on a specific index
+     * @param idx The index to access
+     * @return The file
+     */
     public File fileAt(int idx) {
         return currentSelection.get(idx);
     }
 
     private ArrayList<String> cachedTags;
 
+    /**
+     * Updates the selection, because the file list changed, but our selection did not
+     */
     public void updateSelection() {
         updateSelection(cachedTags);
     }
 
+    /**
+     * Updates the selection, because the selection has changed
+     * @param tags The tags of the new selection
+     */
     public void updateSelection(ArrayList<String> tags) {
         Set<File> current = new HashSet<>(edm.getFileManager().getFiles());
         for (String tag : tags) {

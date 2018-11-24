@@ -17,7 +17,7 @@ public class TextFileViewer extends AbstractFileViewer {
 
     public TextFileViewer(File file) throws IOException {
         super(file);
-        textArea = new JTextArea();
+        textArea = new JTextArea(30, 60);
         textArea.setEditable(true);
         add(textArea, BorderLayout.CENTER);
         BufferedReader br = new BufferedReader(new InputStreamReader(file.getIS()));

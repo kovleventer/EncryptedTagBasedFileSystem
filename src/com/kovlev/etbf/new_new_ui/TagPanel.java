@@ -7,12 +7,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+/**
+ * Displays the current selection (the current list of tags)
+ */
 public class TagPanel extends JPanel {
     private JTextField textField;
     private JButton addButton;
     private JPanel lower;
     private FileListModel flm;
 
+    /**
+     * Gets all Tags from the UI
+     * @return The list of tags as strings
+     */
     private ArrayList<String> getTagStrings() {
         ArrayList<String> list = new ArrayList<>();
         for (Component c : lower.getComponents()) {
@@ -50,6 +57,9 @@ public class TagPanel extends JPanel {
         add(lower, BorderLayout.SOUTH);
     }
 
+    /**
+     * Inner class to store a simple tag
+     */
     private class TagEntry extends JLabel {
         public TagEntry(String s) {
             super(s);
@@ -62,6 +72,7 @@ public class TagPanel extends JPanel {
             addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent mouseEvent) {
+                    // Tags are removed on click
                     lower.remove(TagEntry.this);
                     flm.updateSelection(getTagStrings());
                     textField.setText("");

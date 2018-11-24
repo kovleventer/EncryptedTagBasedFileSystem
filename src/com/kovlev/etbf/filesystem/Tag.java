@@ -1,5 +1,8 @@
 package com.kovlev.etbf.filesystem;
 
+/**
+ * Represents a tag
+ */
 public class Tag extends Entry {
     private String tagString;
     private long id;
@@ -25,10 +28,11 @@ public class Tag extends Entry {
         return tagString.equals(((Tag) o).tagString);
     }
 
+    // Setters, Getters
+
     public void setString(String newTagString) {
         tagString = newTagString;
     }
-
 
     public String getTagString() {
         return tagString;

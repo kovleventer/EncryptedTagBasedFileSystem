@@ -6,11 +6,21 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Helper class for encrypting and decrypting blocks
+ * Unsafe, but whatever
+ */
 public class EncryptionUtils {
 
     private static final String ALGO = "AES";
 
-
+    /**
+     * Encrypts a byte array
+     * @param data The data to encrypt
+     * @param password The password to encrypt with
+     * @return The encrypted byte array
+     * @throws ETBFSException
+     */
     public static byte[] encrypt(byte[] data, String password) throws ETBFSException {
         Key key = generateKey(password);
         Cipher c = null;
@@ -26,6 +36,13 @@ public class EncryptionUtils {
         }
     }
 
+    /**
+     * Decrypts a byte array
+     * @param data The data to encrypt
+     * @param password The password to decrypt with
+     * @return The decrypted byte array
+     * @throws ETBFSException
+     */
     public static byte[] decrypt(byte[] data, String password) throws ETBFSException {
         Key key = generateKey(password);
         Cipher c = null;
@@ -42,6 +59,12 @@ public class EncryptionUtils {
         }
     }
 
+    /**
+     * Generates a key from the password
+     * UNSAFE AS HELL
+     * @param password The password
+     * @return
+     */
     private static Key generateKey(String password) {
         int keylen = 32;
         byte[] key = new byte[keylen];

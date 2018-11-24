@@ -11,11 +11,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Displays the file as an image
+ */
 public class ImageFileViewer extends AbstractFileViewer {
     private BufferedImage image;
 
     private File f;
 
+    /**
+     * Inner class to display the image
+     */
     private class ImagePanel extends JPanel {
         @Override
         protected void paintComponent(Graphics graphics) {
@@ -27,6 +33,7 @@ public class ImageFileViewer extends AbstractFileViewer {
 
     public ImageFileViewer(File file) {
         super(file);
+        setPreferredSize(new Dimension(700, 700));
         f = file;
         try {
             image = ImageIO.read(file.getIS());

@@ -7,6 +7,9 @@ import com.kovlev.etbf.filesystem.Tag;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Lists meta informations about a specific file
+ */
 public class InfoPanel extends JPanel {
     private JPanel fileNameRow, fileSizeRow, tagsRow;
     private EncryptedDataManager edm;
@@ -18,10 +21,13 @@ public class InfoPanel extends JPanel {
         create(null);
     }
 
+    /**
+     * Recreates the view
+     * @param file The newly opened file, null if no file was opened
+     */
     public void create(File file) {
+        removeAll();
         if (file != null) {
-            removeAll();
-
             fileNameRow = new JPanel();
             fileNameRow.add(new JLabel("Filename:"));
             fileNameRow.add(new JLabel(file.getFilename()));
@@ -41,9 +47,8 @@ public class InfoPanel extends JPanel {
             add(fileNameRow);
             add(fileSizeRow);
             add(tagsRow);
-
-            revalidate();
-            repaint();
         }
+        revalidate();
+        repaint();
     }
 }

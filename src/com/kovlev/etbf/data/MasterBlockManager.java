@@ -4,9 +4,13 @@ import com.kovlev.etbf.util.ETBFSException;
 
 import java.util.logging.Logger;
 
+/**
+ * Manages the first block with index 0
+ */
 public class MasterBlockManager {
     public static final String SIGNATURE = "ETBFS container";
     public static final int SIGN_SIZE = 64;
+    public static final long VERSION = 1;
 
     private Block masterBlock;
 
@@ -16,17 +20,28 @@ public class MasterBlockManager {
     private long relationCount;
     private long blockCount;
 
+    /**
+     * Creates a new master block, with default values, signatures, etc
+     * @return The created block
+     * @throws ETBFSException
+     */
     public static Block createEmptyMasterBlock() throws ETBFSException {
         Block b = new Block();
         b.putString(SIGNATURE, 0, SIGN_SIZE);
         b.position(SIGN_SIZE);
         b.putLong(0L); // No files
         b.putLong(0L); // No tags
-        b.putLong(0L); // No files and tags
+        b.putLong(0L); // No files and tag association
         b.putLong(4L); // 4 blocks by default
+        b.putLong(VERSION);
         return b;
     }
 
+    /**
+     * Constructor for master block manager
+     * @param b The master block
+     * @throws Exception
+     */
     public MasterBlockManager(Block b) throws Exception {
         this.masterBlock = b;
         signature = b.getString(0, SIGN_SIZE);
@@ -44,6 +59,8 @@ public class MasterBlockManager {
         System.out.println(fileCount + " files; " + tagCount + " tags; " + relationCount + " relations; " + blockCount + " blocks");
         System.out.println("-----------------------------");
     }
+
+    // Getters, setters
 
     public long getFileCount() {
         return fileCount;
@@ -81,6 +98,9 @@ public class MasterBlockManager {
         updateMetaValues();
     }
 
+    /**
+     * Writes all meta values back into the block
+     */
     private void updateMetaValues() {
         long[] values = { fileCount, tagCount, relationCount, blockCount };
         for (int i = 0; i < values.length; i++) {

@@ -6,10 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Objects;
 
+/**
+ * Frame which shows up before opening an encrypted container
+ */
 public class PreFrame extends JFrame {
 
     private ArrayList<String> paths;
@@ -21,13 +24,12 @@ public class PreFrame extends JFrame {
         if (Files.exists(Paths.get(configfilename))) {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configfilename));
             paths = (ArrayList<String>) ois.readObject();
-            System.out.println(paths.size());
             ois.close();
         } else {
             paths = new ArrayList<>();
         }
 
-        JButton openButton = new JButton("Open");
+        JButton openButton = new JButton("Open or create new container");
         openButton.addActionListener(actionEvent -> {
             JFileChooser jfc = new JFileChooser();
             int returnValue = jfc.showOpenDialog(null);
@@ -55,26 +57,19 @@ public class PreFrame extends JFrame {
                 int idx = list.getSelectedIndex();
                 if (idx != -1) {
                     try {
+                        list.clearSelection();
                         open(paths.get(idx));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    list.clearSelection();
+
                 }
             }
         });
 
-        JButton createButton = new JButton("Create");
-        createButton.addActionListener(actionEvent -> {
 
-        });
-
-
-        JPanel panel = new JPanel();
-        panel.add(openButton);
-        panel.add(createButton);
-        add(panel, BorderLayout.NORTH);
+        add(openButton, BorderLayout.NORTH);
         add(list, BorderLayout.CENTER);
 
         pack();
@@ -82,14 +77,20 @@ public class PreFrame extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Opens an Encrypted Container with the given filename, and the password acquired from the user
+     * @param filename The container file's name
+     * @throws Exception
+     */
     private void open(String filename) throws Exception {
         String password = JOptionPane.showInputDialog(new JFrame(), "Password");
-        try {
-            new MainFrame(filename, password);
-            dispose();
-        } catch (ETBFSException e) {
-            JOptionPane.showMessageDialog(new JFrame(), "Exception: " + e);
+        if (!password.equals("")) {
+            try {
+                new MainFrame(filename, password);
+                dispose();
+            } catch (ETBFSException e) {
+                JOptionPane.showMessageDialog(new JFrame(), "Exception: " + e);
+            }
         }
-
     }
 }

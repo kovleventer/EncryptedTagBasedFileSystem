@@ -1,9 +1,18 @@
 package com.kovlev.etbf.filesystem;
 
+/**
+ * Association between a file and a tag
+ */
 public class Relation extends Entry {
     private long fileID;
     private long tagID;
 
+    /**
+     * Constructor
+     * Files and tags are identified with an id
+     * @param fileID
+     * @param tagID
+     */
     public Relation(long fileID, long tagID) {
         this.fileID = fileID;
         this.tagID = tagID;

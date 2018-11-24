@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Manages file tag associations
+ */
 public class RelationManager extends Manager<Relation> {
 
     private static final int FILE_ID_SIZE = Long.BYTES;
@@ -24,6 +27,8 @@ public class RelationManager extends Manager<Relation> {
     public RelationManager(long count, EncryptedDataManager edm) throws Exception {
         super(count, edm);
     }
+
+    // Getters
 
     public Set<File> getFilesWithTag(String tagname) {
         return getFilesWithTag(tm.getTag(tagname));
@@ -41,6 +46,13 @@ public class RelationManager extends Manager<Relation> {
         return relationship.getValues(file);
     }
 
+    /**
+     * Assigns a tag to a file
+     * @param filename The name of the file
+     * @param tagname The name of the tag
+     * @return True if the association did not exist before
+     * @throws Exception
+     */
     public boolean addRelation(String filename, String tagname) throws Exception {
         File f = fm.getFile(filename);
         Tag t = tm.getTag(tagname);
