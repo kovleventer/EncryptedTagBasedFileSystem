@@ -107,7 +107,7 @@ public class Block {
         byte[] rawBuf = new byte[maxLength];
         data.get(rawBuf);
         int i;
-        for (i = 0; i < rawBuf.length && rawBuf[i] != 0; i++) { }
+        for (i = 0; i < rawBuf.length && ((rawBuf[i] & 0xFF) != 0); i++) { }
         String s = new String(rawBuf, 0, i);
         return s;
     }
@@ -131,13 +131,15 @@ public class Block {
      * @throws ETBFSException In case our String is too long
      */
     public void putString(String value, int index, int maxLength) throws ETBFSException {
+        byte[] fill = new byte[maxLength];
         byte[] stringBytes = value.getBytes();
         if (stringBytes.length > maxLength) {
             throw new ETBFSException("String too long to be packed");
         }
         data.position(index);
+        data.put(fill);
+        data.position(index);
         data.put(stringBytes);
-        data.put(stringBytes.length, (byte)0); // Null terminated
         modified = true;
     }
 

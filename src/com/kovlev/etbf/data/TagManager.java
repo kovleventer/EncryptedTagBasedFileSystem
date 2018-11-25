@@ -58,7 +58,7 @@ public class TagManager extends Manager<Tag> {
         return tagsByID.get(tagID);
     }
 
-    public Collection<Tag> getFiles() {
+    public Collection<Tag> getTags() {
         return tagsByName.values();
     }
 
